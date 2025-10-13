@@ -8,10 +8,11 @@
 ## 特徴
 
 ✨ **シンプルで洗練されたUI** - customtkinterによるモダンなデザイン  
-🖱️ **ドラッグ&ドロップ対応** - 複数ファイルの一括変換が簡単  
+📁 **複数ファイル対応** - 一括変換が簡単  
 ⚡ **非同期処理** - 変換中もUIが固まらない  
 📊 **リアルタイムプログレス表示** - 進行状況が一目瞭然  
 🎨 **多様な画像形式をサポート** - JPG, PNG, BMP, GIF, TIFF, WebPに対応  
+🔧 **保守性の高い設計** - 機能別にモジュール分割された構造  
 
 ## 必要要件
 
@@ -58,8 +59,8 @@ python main.py
 ### 変換手順
 
 1. **画像を選択**
-   - ドラッグ&ドロップエリアに画像ファイルをドロップ
-   - または「画像ファイルを選択」ボタンから選択
+   - 「画像ファイルを選択」ボタンをクリック
+   - 変換したい画像ファイルを選択（複数選択可能）
 
 2. **保存先を指定**
    - 「保存先フォルダを選択」ボタンをクリック
@@ -83,7 +84,6 @@ python main.py
 - **GUI**: customtkinter 5.2.2
 - **画像処理**: Pillow 10.4.0+
 - **AVIF変換**: pillow-avif-plugin 1.4.3+
-- **ドラッグ&ドロップ**: tkinterdnd2 0.3.0
 - **非同期処理**: threading (標準ライブラリ)
 
 ## プロジェクト構造
@@ -91,21 +91,36 @@ python main.py
 ```
 avif-converter/
 │
-├── main.py              # メインアプリケーション
+├── main.py              # エントリーポイント
+├── gui.py               # GUIクラス
+├── converter.py         # AVIF変換ロジック
+├── config.py            # 設定・定数
 ├── requirements.txt     # 依存パッケージ
 ├── README.md           # このファイル
 ├── TODO.md             # 開発ToDoリスト
+├── test_avif.py        # テストスクリプト
 ├── .gitignore          # Git除外設定
 └── .venv/              # 仮想環境（除外）
 ```
 
+### モジュール説明
+
+- **main.py**: アプリケーションのエントリーポイント
+- **gui.py**: customtkinterを使用したGUIの実装
+- **converter.py**: AVIF変換処理のコアロジック
+- **config.py**: アプリケーション設定と定数の管理
+
 ## 設定
 
 デフォルトの変換品質は `quality=85` に設定されています。  
-変換品質を変更したい場合は、`main.py`の以下の行を編集してください：
+設定を変更したい場合は、`config.py`を編集してください：
 
 ```python
-img.save(output_path, 'AVIF', quality=85)  # 0-100の値に変更可能
+# config.py
+AVIF_QUALITY = 85  # 0-100の値に変更可能
+DEBUG_MODE = True  # デバッグメッセージの表示/非表示
+WINDOW_WIDTH = 650  # ウィンドウ幅
+WINDOW_HEIGHT = 550  # ウィンドウ高さ
 ```
 
 ## 今後の改善予定

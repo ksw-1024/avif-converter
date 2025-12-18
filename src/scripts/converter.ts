@@ -298,6 +298,9 @@ function main() {
 		formatSelect.disabled = next;
 		qualitySlider.disabled = next;
 		if (next) setText(statusEl, '変換中…');
+		// The per-item buttons are rendered dynamically; re-render when busy state changes
+		// so "ダウンロード" becomes clickable after conversion completes.
+		render();
 	}
 
 	function clearError() {
@@ -643,7 +646,6 @@ function main() {
 	window.addEventListener('beforeunload', () => {
 		for (const item of items) {
 			URL.revokeObjectURL(item.inputUrl);
-			if (item.outputUrl) URL.revokeObjectURL(item.outputUrl);
 		}
 	});
 

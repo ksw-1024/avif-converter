@@ -1,10 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-import relativeLinks from 'astro-relative-links';
-
 // https://astro.build/config
 export default defineConfig({
+  // Deploying under a subpath (e.g. https://example.com/c-img/) requires setting a base.
+  // Example: ASTRO_BASE="/c-img/" pnpm build
+  base: process.env.ASTRO_BASE || '/',
+  site: process.env.ASTRO_SITE,
   output: 'static',
 
   vite: {
@@ -15,6 +17,4 @@ export default defineConfig({
           format: 'es',
       },
 	},
-
-  integrations: [relativeLinks()],
 });

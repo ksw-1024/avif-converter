@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@jsquash/avif": "^2.0.0",
-    "astro": "^5.16.6",
-    "astro-relative-links": "^0.4.2"
+    "astro": "^5.16.6"
   }
 }

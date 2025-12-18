@@ -1,163 +1,43 @@
-# AVIF Converter
+# Astro Starter Kit: Minimal
 
-画像ファイルをAVIF形式に変換するGUIアプリケーション
-
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-
-## 特徴
-
-✨ **シンプルで洗練されたUI** - customtkinterによるモダンなデザイン  
-📁 **複数ファイル対応** - 一括変換が簡単  
-⚡ **非同期処理** - 変換中もUIが固まらない  
-📊 **リアルタイムプログレス表示** - 進行状況が一目瞭然  
-🎨 **多様な画像形式をサポート** - JPG, PNG, BMP, GIF, TIFF, WebPに対応  
-🔧 **保守性の高い設計** - 機能別にモジュール分割された構造  
-
-## 必要要件
-
-- Python 3.8以上
-- Windows / macOS / Linux
-
-## インストール
-
-### 1. リポジトリのクローン
-
-```bash
-git clone <repository-url>
-cd avif-converter
+```sh
+pnpm create astro@latest -- --template minimal
 ```
 
-### 2. 仮想環境の作成と有効化
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-**Windows:**
-```powershell
-python -m venv .venv
-.\.venv\Scripts\activate
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+├── src/
+│   └── pages/
+│       └── index.astro
+└── package.json
 ```
 
-**macOS/Linux:**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-### 3. 依存パッケージのインストール
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-```bash
-pip install -r requirements.txt
-```
+Any static assets, like images, can be placed in the `public/` directory.
 
-## 使い方
+## 🧞 Commands
 
-### アプリケーションの起動
+All commands are run from the root of the project, from a terminal:
 
-```bash
-python main.py
-```
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `pnpm install`             | Installs dependencies                            |
+| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
+| `pnpm build`           | Build your production site to `./dist/`          |
+| `pnpm preview`         | Preview your build locally, before deploying     |
+| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `pnpm astro -- --help` | Get help using the Astro CLI                     |
 
-### 変換手順
+## 👀 Want to learn more?
 
-1. **画像を選択**
-   - 「画像ファイルを選択」ボタンをクリック
-   - 変換したい画像ファイルを選択（複数選択可能）
-
-2. **保存先を指定**
-   - 「保存先フォルダを選択」ボタンをクリック
-   - 変換後のAVIFファイルを保存するフォルダを選択
-
-3. **変換開始**
-   - 「AVIF形式に変換」ボタンをクリック
-   - プログレスバーで進行状況を確認
-
-## 対応画像形式
-
-- JPEG (`.jpg`, `.jpeg`)
-- PNG (`.png`)
-- BMP (`.bmp`)
-- GIF (`.gif`)
-- TIFF (`.tiff`, `.tif`)
-- WebP (`.webp`)
-
-## 技術スタック
-
-- **GUI**: customtkinter 5.2.2
-- **画像処理**: Pillow 10.4.0+
-- **AVIF変換**: pillow-avif-plugin 1.4.3+
-- **非同期処理**: threading (標準ライブラリ)
-
-## プロジェクト構造
-
-```
-avif-converter/
-│
-├── main.py              # エントリーポイント
-├── gui.py               # GUIクラス
-├── converter.py         # AVIF変換ロジック
-├── config.py            # 設定・定数
-├── requirements.txt     # 依存パッケージ
-├── README.md           # このファイル
-├── TODO.md             # 開発ToDoリスト
-├── test_avif.py        # テストスクリプト
-├── .gitignore          # Git除外設定
-└── .venv/              # 仮想環境（除外）
-```
-
-### モジュール説明
-
-- **main.py**: アプリケーションのエントリーポイント
-- **gui.py**: customtkinterを使用したGUIの実装
-- **converter.py**: AVIF変換処理のコアロジック
-- **config.py**: アプリケーション設定と定数の管理
-
-## 設定
-
-デフォルトの変換品質は `quality=85` に設定されています。  
-設定を変更したい場合は、`config.py`を編集してください：
-
-```python
-# config.py
-AVIF_QUALITY = 85  # 0-100の値に変更可能
-DEBUG_MODE = True  # デバッグメッセージの表示/非表示
-WINDOW_WIDTH = 650  # ウィンドウ幅
-WINDOW_HEIGHT = 550  # ウィンドウ高さ
-```
-
-## 今後の改善予定
-
-- [ ] 変換のキャンセル機能
-- [ ] 品質設定のUI追加
-- [ ] バッチ処理の最適化
-- [ ] エラーログの出力機能
-- [ ] ダークモード/ライトモードの切り替え
-
-## トラブルシューティング
-
-### アプリが起動しない
-
-- Python 3.8以上がインストールされているか確認
-- 仮想環境が有効化されているか確認
-- 依存パッケージが正しくインストールされているか確認
-
-### 変換が失敗する
-
-- 画像ファイルが破損していないか確認
-- 保存先フォルダへの書き込み権限があるか確認
-- ディスクの空き容量が十分にあるか確認
-
-## ライセンス
-
-MIT License
-
-## 貢献
-
-プルリクエストを歓迎します！  
-大きな変更の場合は、まずissueを開いて変更内容を議論してください。
-
-## 作者
-
-開発者: [Your Name]
-
----
-
-**注意**: AVIF形式は比較的新しい形式です。一部の古いソフトウェアでは表示できない場合があります。
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

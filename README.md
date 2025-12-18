@@ -1,43 +1,32 @@
-# Astro Starter Kit: Minimal
+# avif-converter
+
+JPG/PNG を **WebP / AVIF** に **クライアントサイド変換**してダウンロードできる、Astro の静的Webアプリです。
+
+- 画像のアップロードは行いません（ローカルで完結）
+- WebP は `canvas.toBlob('image/webp', quality)` を使用
+- AVIF は `@jsquash/avif` (WASM) を **Web Worker** で実行（AVIF選択時に遅延 import）
+
+## 使い方
 
 ```sh
-pnpm create astro@latest -- --template minimal
+pnpm install
+pnpm dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ビルド（静的）
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+pnpm build
+pnpm preview
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Troubleshooting
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### `wasm validation error ... failed to match magic number` / `404 /node_modules/.vite/deps/*.wasm`
 
-Any static assets, like images, can be placed in the `public/` directory.
+Vite の依存最適化（prebundle）で `@jsquash/avif` の `.wasm` が正しく配信されず、404 HTMLをwasmとして読みにいって失敗することがあります。
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```sh
+rm -rf node_modules/.vite
+pnpm dev
+```

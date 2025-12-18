@@ -1,4 +1,5 @@
 ---
+import "the-new-css-reset/css/reset.css";
 import "../styles/global.css";
 ---
 
@@ -6,6 +7,12 @@ import "../styles/global.css";
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <!-- Google Font -->
+         <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Murecho:wght@100..900&display=swap" rel="stylesheet">
+
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>WebP/AVIFに変換しよう</title>
@@ -14,3 +21,24 @@ import "../styles/global.css";
         <slot />
     </body>
 </html>
+
+<style is:global lang="scss">
+    :root {
+        --text: #111827;
+        --text-soft: #374151;
+        --muted: #6b7280;
+        --border: #d1d5db;
+        --border-strong: #9ca3af;
+        --card: #ffffff;
+        --bg: #f3f4f6;
+        --danger: #dc2626;
+        --accent: #000000;
+        --accent-soft: #374151;
+    }
+
+    body {
+        font-family: 'Murecho', sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+    }
+</style>

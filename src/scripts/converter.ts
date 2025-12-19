@@ -354,24 +354,25 @@ function main() {
 		fileList.replaceChildren();
 		for (const item of items) {
 			const row = document.createElement('div');
-			row.className = 'file';
+			row.className = 'grid grid-cols-[90px_1fr] gap-3 p-3 border-2 border-[var(--border)] rounded-md bg-[var(--card)]';
 
 			const thumb = document.createElement('div');
-			thumb.className = 'file__thumb';
+			thumb.className = 'w-[90px] h-16 rounded border-2 border-[var(--border)] bg-[var(--bg)] grid place-items-center overflow-hidden';
 			const img = document.createElement('img');
 			img.alt = item.file.name;
 			img.src = item.inputUrl;
+			img.className = 'w-full h-full object-cover block';
 			thumb.appendChild(img);
 
 			const meta = document.createElement('div');
-			meta.className = 'file__meta';
+			meta.className = 'grid gap-2';
 
 			const name = document.createElement('div');
-			name.className = 'file__name';
+			name.className = 'font-extrabold text-[13px] leading-tight break-words text-[var(--text)]';
 			name.textContent = item.file.name;
 
 			const sub = document.createElement('div');
-			sub.className = 'file__sub';
+			sub.className = 'text-[var(--text-soft)] text-xs font-medium whitespace-pre-wrap break-words';
 			const lines: string[] = [];
 			lines.push(`入力: ${formatBytes(item.file.size)} (${item.file.type || 'unknown'})`);
 			if (item.status === 'converting') lines.push('状態: 変換中…');
@@ -381,18 +382,18 @@ function main() {
 			sub.textContent = lines.join('\n');
 
 			const actions = document.createElement('div');
-			actions.className = 'file__actions';
+			actions.className = 'flex flex-wrap gap-2';
 
 			const convertOneBtn = document.createElement('button');
 			convertOneBtn.type = 'button';
-			convertOneBtn.className = 'btn small primary';
+			convertOneBtn.className = 'appearance-none border-2 px-3 py-2 rounded-md cursor-pointer font-bold text-xs transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed bg-[var(--accent)] text-[var(--card)] border-[var(--accent)] hover:enabled:bg-[var(--accent-soft)] hover:enabled:border-[var(--accent-soft)]';
 			convertOneBtn.textContent = '変換';
 			convertOneBtn.disabled = isBusy;
 			convertOneBtn.addEventListener('click', () => void convertOne(item.id));
 
 			const dlBtn = document.createElement('button');
 			dlBtn.type = 'button';
-			dlBtn.className = 'btn small';
+			dlBtn.className = 'appearance-none border-2 border-[var(--border)] bg-[var(--card)] text-[var(--text)] px-3 py-2 rounded-md cursor-pointer font-bold text-xs transition-all duration-200 hover:enabled:bg-[var(--bg)] hover:enabled:border-[var(--border-strong)] disabled:opacity-40 disabled:cursor-not-allowed';
 			dlBtn.textContent = 'ダウンロード';
 			dlBtn.disabled = isBusy || !item.outputBlob;
 			dlBtn.addEventListener('click', () => void download(item.id));

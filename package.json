@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@jsquash/avif": "^2.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",

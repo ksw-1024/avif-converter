@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="max-w-4xl mx-auto px-6 py-12">
+		<h1 class="text-2xl font-normal mb-12 text-(--text)">動画サイズ変換</h1>
+
+		<section>
+			<div
+				id="dropzone"
+				class="border-2 border-dashed border-(--border) rounded-lg p-16 cursor-pointer outline-none transition-colors hover:border-(--text) text-center"
+				role="button"
+				tabindex="0"
+				aria-label="動画をドロップ または クリックして選択"
+			>
+				<svg class="w-12 h-12 mx-auto mb-4 text-(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-6 0h.01M4 6h9a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+				</svg>
+				<div class="text-base text-(--muted)">動画をドロップ</div>
+				<input id="fileInput" class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0" style="clip: rect(0, 0, 0, 0);" type="file" accept="video/*" multiple />
+				<div id="fileMeta" class="text-sm text-(--muted) mt-3" aria-live="polite"></div>
+			</div>
+			<button id="pickBtn" class="hidden" type="button"></button>
+
+			<div class="mt-8 flex flex-wrap items-center gap-6">
+				<div class="flex items-center gap-3">
+					<span class="text-sm text-(--muted)">サイズ</span>
+					<select id="sizeSelect" class="border border-(--border) rounded px-4 py-2 text-sm cursor-pointer bg-white" aria-label="動画サイズ">
+						<option value="original">オリジナル</option>
+						<option value="1080">1080p</option>
+						<option value="720">720p</option>
+						<option value="480">480p</option>
+						<option value="360">360p</option>
+					</select>
+				</div>
+				<div class="flex items-center gap-3">
+					<span class="text-sm text-(--muted)">形式</span>
+					<select id="formatSelect" class="border border-(--border) rounded px-4 py-2 text-sm cursor-pointer bg-white" aria-label="動画形式">
+						<option value="mp4">MP4</option>
+						<option value="webm">WebM</option>
+					</select>
+				</div>
+				<button id="convertBtn" class="flex items-center gap-2 border border-(--text) bg-(--text) text-white px-6 py-2 rounded text-sm hover:enabled:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity" type="button" disabled>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+					</svg>
+					変換
+				</button>
+				<button id="clearBtn" class="flex items-center gap-2 text-sm text-(--muted) hover:enabled:text-(--text) disabled:opacity-30 disabled:cursor-not-allowed transition-colors" type="button" disabled>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+					</svg>
+					クリア
+				</button>
+			</div>
+
+			<div class="mt-12">
+				<div id="fileList" class="grid gap-4" aria-live="polite"></div>
+				<div id="status" class="text-sm text-(--muted) mt-6" aria-live="polite"></div>
+				<div id="error" class="text-sm text-(--danger) mt-4" role="alert"></div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		import '../../scripts/video-converter.ts';
+	</script>
+</Layout>
+
+<style>
+	#dropzone.is-dragover {
+		border-color: var(--text);
+		background: var(--bg);
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.animate-spin {
+		animation: spin 1s linear infinite;
+	}
+</style>

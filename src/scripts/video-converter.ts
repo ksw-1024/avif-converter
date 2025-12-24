@@ -1,5 +1,8 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import { fetchFile } from '@ffmpeg/util';
+import coreURL from '@ffmpeg/core?url';
+import wasmURL from '@ffmpeg/core/wasm?url';
+import classWorkerURL from '@ffmpeg/ffmpeg/worker?url';
 
 type OutputFormat = 'mp4' | 'webm';
 
@@ -108,6 +111,9 @@ function main() {
 	const formatSelect = assertEl(document.querySelector<HTMLSelectElement>('#formatSelect'), '#formatSelect');
 	const convertBtn = assertEl(document.querySelector<HTMLButtonElement>('#convertBtn'), '#convertBtn');
 	const clearBtn = assertEl(document.querySelector<HTMLButtonElement>('#clearBtn'), '#clearBtn');
+	const progressWrap = assertEl(document.querySelector<HTMLDivElement>('#progressWrap'), '#progressWrap');
+	const progressBar = assertEl(document.querySelector<HTMLDivElement>('#progressBar'), '#progressBar');
+	const progressLabel = assertEl(document.querySelector<HTMLDivElement>('#progressLabel'), '#progressLabel');
 	const fileList = assertEl(document.querySelector<HTMLDivElement>('#fileList'), '#fileList');
 	const statusEl = assertEl(document.querySelector<HTMLDivElement>('#status'), '#status');
 	const errorEl = assertEl(document.querySelector<HTMLDivElement>('#error'), '#error');
@@ -119,9 +125,30 @@ function main() {
 	let items: Item[] = [];
 	let nextItemId = 0;
 	let isBusy = false;
+	let progressActive = false;
+	let activeIndex = 0;
+	let activeTotal = 0;
+	let activeName = '';
 
 	function setStatus(message: string) {
 		setText(statusEl, message);
+	}
+
+	function setProgress(value: number | null) {
+		if (value === null) {
+			progressActive = false;
+			progressWrap.classList.add('hidden');
+			progressBar.style.width = '0%';
+			progressLabel.textContent = '';
+			return;
+		}
+		progressActive = true;
+		const pct = Math.max(0, Math.min(100, Math.round(value * 100)));
+		progressBar.style.width = `${pct}%`;
+		const prefix = activeTotal > 0 ? `${activeIndex}/${activeTotal}` : '';
+		const name = activeName ? ` ${activeName}` : '';
+		progressLabel.textContent = `${prefix}${name} ${pct}%`;
+		progressWrap.classList.remove('hidden');
 	}
 
 	function clearError() {
@@ -142,6 +169,7 @@ function main() {
 		formatSelect.disabled = next;
 		if (next) setStatus('変換中');
 		if (!next && items.length === 0) setStatus('');
+		if (!next) setProgress(null);
 		render();
 	}
 
@@ -269,16 +297,20 @@ function main() {
 		}
 	}
 
+	function beginProgress(item: Item, index: number, total: number) {
+		activeIndex = index;
+		activeTotal = total;
+		activeName = item.file.name;
+		setProgress(0);
+		setStatus(`変換中 ${index}/${total}`);
+	}
+
 	async function loadFfmpeg() {
 		if (ffmpegLoaded) return;
 		if (ffmpegLoading) return ffmpegLoading;
 		setStatus('FFmpegを準備しています');
 		ffmpegLoading = (async () => {
-			const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
-			const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript');
-			const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm');
-			const workerURL = await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript');
-			await ffmpeg.load({ coreURL, wasmURL, workerURL });
+			await ffmpeg.load({ coreURL, wasmURL, classWorkerURL });
 			ffmpegLoaded = true;
 		})();
 		try {
@@ -313,7 +345,7 @@ function main() {
 		clearError();
 		setBusy(true);
 		try {
-			await convertOneInternal(item);
+			await convertOneInternal(item, 1, 1);
 		} finally {
 			setBusy(false);
 		}
@@ -324,16 +356,18 @@ function main() {
 		clearError();
 		setBusy(true);
 		try {
-			for (const item of items) {
-				if (item.status === 'done' && item.outputBlob) continue;
-				await convertOneInternal(item);
+			const targets = items.filter((it) => !(it.status === 'done' && it.outputBlob));
+			const total = targets.length;
+			for (let index = 0; index < targets.length; index++) {
+				const item = targets[index];
+				await convertOneInternal(item, index + 1, total);
 			}
 		} finally {
 			setBusy(false);
 		}
 	}
 
-	async function convertOneInternal(item: Item) {
+	async function convertOneInternal(item: Item, index: number, total: number) {
 		await loadFfmpeg();
 		const format = getOutputFormat();
 		const targetHeight = getTargetHeight();
@@ -344,6 +378,7 @@ function main() {
 
 		item.status = 'converting';
 		item.error = null;
+		beginProgress(item, index, total);
 		render();
 
 		try {
@@ -362,6 +397,7 @@ function main() {
 			item.outputMime = mime;
 			item.outputSize = blob.size;
 			item.status = 'done';
+			setProgress(1);
 			render();
 		} catch (err) {
 			console.error(err);
@@ -473,6 +509,11 @@ function main() {
 	});
 
 	render();
+
+	ffmpeg.on('progress', ({ progress }) => {
+		if (!isBusy || !progressActive) return;
+		if (typeof progress === 'number') setProgress(progress);
+	});
 }
 
 main();

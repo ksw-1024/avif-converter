@@ -55,6 +55,16 @@ import Layout from '../../layouts/Layout.astro';
 				</button>
 			</div>
 
+			<div id="progressWrap" class="mt-6 hidden" aria-live="polite">
+				<div class="flex items-center justify-between text-xs text-(--muted) mb-2">
+					<span>進捗</span>
+					<span id="progressLabel"></span>
+				</div>
+				<div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+					<div id="progressBar" class="bg-black h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+				</div>
+			</div>
+
 			<div class="mt-12">
 				<div id="fileList" class="grid gap-4" aria-live="polite"></div>
 				<div id="status" class="text-sm text-(--muted) mt-6" aria-live="polite"></div>

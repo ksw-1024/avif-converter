@@ -13,7 +13,7 @@ export default defineConfig({
 
   vite: {
     optimizeDeps: {
-      exclude: ['@jsquash/avif'],
+      exclude: ['@jsquash/avif', "ffmpeg.wasm"],
     },
 
     worker: {

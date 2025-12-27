@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "astro build && node scripts/deploy-ftp.mjs",
     "astro": "astro"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "@jsquash/avif": "^2.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",
+    "basic-ftp": "^5.0.5",
     "tailwindcss": "^4.1.18",
     "the-new-css-reset": "^1.11.3"
   },

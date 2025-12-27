@@ -1,5 +1,4 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
+import { FFmpeg, FFFSType } from '@ffmpeg/ffmpeg';
 import coreURL from '@ffmpeg/core?url';
 import wasmURL from '@ffmpeg/core/wasm?url';
 
@@ -84,21 +83,6 @@ async function saveBlob(blob: Blob, filename: string) {
 	a.click();
 	a.remove();
 	setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
-function getFileExt(file: File): string {
-	const nameExt = file.name.split('.').pop();
-	if (nameExt && nameExt !== file.name) return nameExt;
-	switch (file.type) {
-		case 'video/mp4':
-			return 'mp4';
-		case 'video/webm':
-			return 'webm';
-		case 'video/quicktime':
-			return 'mov';
-		default:
-			return 'video';
-	}
 }
 
 function main() {
@@ -363,6 +347,29 @@ function main() {
 		}
 	}
 
+	async function mountInputFile(file: File, mountDir: string): Promise<string> {
+		try {
+			await ffmpeg.createDir(mountDir);
+		} catch {
+			// ignore mkdir errors (already exists)
+		}
+		await ffmpeg.mount(FFFSType.WORKERFS, { files: [file] }, mountDir);
+		return `${mountDir}/${file.name}`;
+	}
+
+	async function unmountInputFile(mountDir: string) {
+		try {
+			await ffmpeg.unmount(mountDir);
+		} catch {
+			// ignore unmount errors
+		}
+		try {
+			await ffmpeg.deleteDir(mountDir);
+		} catch {
+			// ignore cleanup errors
+		}
+	}
+
 	function getTargetHeight(): number | null {
 		if (sizeSelect.value === 'original') return null;
 		const value = Number(sizeSelect.value);
@@ -410,10 +417,9 @@ function main() {
 		await loadFfmpeg();
 		const format = getOutputFormat();
 		const targetHeight = getTargetHeight();
-		const inputExt = getFileExt(item.file);
-		const inputName = `input-${item.id}.${inputExt}`;
 		const outputExt = format === 'mp4' ? 'mp4' : 'webm';
 		const outputName = `output-${item.id}.${outputExt}`;
+		const mountDir = `/input-${item.id}`;
 
 		item.status = 'converting';
 		item.error = null;
@@ -421,8 +427,8 @@ function main() {
 		render();
 
 		try {
-			await ffmpeg.writeFile(inputName, await fetchFile(item.file));
-			const args: string[] = ['-i', inputName];
+			const inputPath = await mountInputFile(item.file, mountDir);
+			const args: string[] = ['-i', inputPath];
 			if (targetHeight) {
 				args.push('-vf', `scale=-2:${targetHeight}`);
 			}
@@ -445,7 +451,7 @@ function main() {
 			render();
 		} finally {
 			try {
-				await ffmpeg.deleteFile(inputName);
+				await unmountInputFile(mountDir);
 			} catch {
 				// ignore cleanup errors
 			}
